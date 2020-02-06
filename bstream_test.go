@@ -5,6 +5,23 @@ import (
 	"testing"
 )
 
+// go test -v  . -run  TestReadDestructive
+//     bstream_test.go:19: true <nil> 0 <nil>
+//     bstream_test.go:20: before [128 0] after [0 0]
+func TestReadDestructive(t *testing.T) {
+	b := newBWriter(2)
+	b.writeBit(true)
+	b.writeByte(0)
+	buf := b.bytes()
+	cp := append([]byte{}, buf...)
+
+	r := newBReader(buf)
+	b1, e1 := r.readBit()
+	byt1, e2 := r.readByte()
+	t.Log(b1, e1, byt1, e2)
+	t.Logf("before %v after %v", cp, buf)
+}
+
 func TestNewBWriter(t *testing.T) {
 	b := newBWriter(1)
 	if b.count != 0 {
